@@ -21,27 +21,27 @@ const useAppUtils = () => {
   }, []);
 
   const handleSubmit = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
       const url = process.env.REACT_APP_API_URL + routes.products;
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('Network response was not ok');
-          }
-          setForm(initialValues);
-          alert('Product created successfully');
-        })
-        .catch((e) => {
-          console.error(e);
-          alert('Sorry something went wrong');
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(form),
         });
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        setForm(initialValues);
+        alert('Product created successfully');
+      } catch (e) {
+        console.error(e);
+        alert('Sorry something went wrong');
+      }
     },
     [form]
   );
