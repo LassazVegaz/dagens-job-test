@@ -3,6 +3,7 @@ const { Guid } = require('js-guid');
 const schemas = require('../schemas');
 const db = require('../db');
 const filters = require('../lib/filters');
+const getNNearest = require('../lib/n-nearest');
 
 const router = express.Router();
 
@@ -36,6 +37,21 @@ router.get('/', (req, res) => {
   products = products.slice(start, end);
 
   res.send(db.products);
+});
+
+// Here is how I understood the 3rd question
+// Get the product by id. Then get N products with nearest price to the product.
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+  const product = db.products.find((product) => product.id === id);
+  if (!product) {
+    res.status(404).send({ status: 404, message: 'Product not found' });
+    return;
+  }
+
+  const n = 5;
+  const nearestProducts = getNNearest(id, db.products, n);
+  res.send([product, ...nearestProducts]);
 });
 
 module.exports = router;
