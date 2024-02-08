@@ -11,7 +11,7 @@ router.post('/', (req, res) => {
     const product = {
       name: req.body.name,
       category: req.body.category,
-      price: req.body.price,
+      price: parseFloat(req.body.price),
       id: Guid.newGuid().toString(),
     };
     db.products.push(product);
